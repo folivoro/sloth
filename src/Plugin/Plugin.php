@@ -2,22 +2,19 @@
 
 namespace Sloth\Plugin;
 
-use \Brain\Hierarchy\QueryTemplate;
 use Brain\Hierarchy\Finder\FoldersTemplateFinder;
+use Brain\Hierarchy\QueryTemplate;
 use function class_exists;
 use Corcel\Model\User;
 use function debug;
-
-
+use function post_password_required;
 use Sloth\ACF\ACFHelper;
-
 use Sloth\Admin\Customizer;
 use Sloth\Core\Sloth;
 use Sloth\Facades\Configure;
 use Sloth\Facades\View;
 use Sloth\Media\Version;
 use Sloth\Utility\Utility;
-use function post_password_required;
 
 class Plugin extends \Singleton
 {
@@ -35,47 +32,47 @@ class Plugin extends \Singleton
      */
     public function __construct()
     {
-        if (! is_blog_installed()) {
+        if (!is_blog_installed()) {
             return;
         }
 
         $this->container = $GLOBALS['sloth']->container;
         $this->loadControllers();
-        #$this->loadTaxonomies();
-        #\Route::instance()->boot();
+        //$this->loadTaxonomies();
+        //\Route::instance()->boot();
 
         $this->fixPagination();
 
-        /**
+        /*
          * set current_theme_path
          */
         $this->current_theme_path = realpath(get_template_directory());
-        /**
+        /*
          * tell container about current theme path
          */
         $this->container->addPath('theme', $this->current_theme_path);
 
-        /**
+        /*
          * tell ViewFinder about current theme's view path
          */
-        if (is_dir($this->current_theme_path . DS . 'View')) {
-            $this->container['view.finder']->addLocation($this->current_theme_path . DS . 'View');
+        if (is_dir($this->current_theme_path.DS.'View')) {
+            $this->container['view.finder']->addLocation($this->current_theme_path.DS.'View');
         }
 
-        /**
+        /*
          * tell ViewFinder about sloths's view path
          */
-        $this->container['view.finder']->addLocation(dirname(__DIR__) . DS . '_view');
+        $this->container['view.finder']->addLocation(dirname(__DIR__).DS.'_view');
 
-        /**
+        /*
          * Update Twig Loaded registered paths.
          */
         $this->container['twig.loader']->setPaths($this->container['view.finder']->getPaths());
 
         /**
-         * include theme's config
+         * include theme's config.
          */
-        $theme_config = $this->current_theme_path . DS . 'config.php';
+        $theme_config = $this->current_theme_path.DS.'config.php';
         if (file_exists($theme_config)) {
             include_once $theme_config;
         }
@@ -85,11 +82,11 @@ class Plugin extends \Singleton
 
     public function autoloadPlugins()
     {
-        if (! Configure::read('plugins.autoactivate')) {
+        if (!Configure::read('plugins.autoactivate')) {
             return;
         }
 
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        include_once ABSPATH.'wp-admin/includes/plugin.php';
         foreach (array_keys(\get_plugins()) as $plugin) {
             // bail if plugin is already active
             if (is_plugin_active($plugin)) {
@@ -113,7 +110,7 @@ class Plugin extends \Singleton
         $used = [];
         foreach ($menu as $offset => $menu_item) {
             $pi = pathinfo($menu_item[2], PATHINFO_EXTENSION);
-            if (! preg_match('/^php/', $pi)) {
+            if (!preg_match('/^php/', $pi)) {
                 continue;
             }
             if (in_array($menu_item[2], $used)) {
@@ -128,10 +125,10 @@ class Plugin extends \Singleton
     {
         $url_info = parse_url($url);
 
-        if (! preg_match('/^\/cms/', $url_info['path'])) {
-            $url = $url_info['scheme'] . '://' . $url_info['host'] . '/cms' . $url_info['path'];
-            if (isset($url_info['query']) && ! empty($url_info['query'])) {
-                $url .= '?' . $url_info['query'];
+        if (!preg_match('/^\/cms/', $url_info['path'])) {
+            $url = $url_info['scheme'].'://'.$url_info['host'].'/cms'.$url_info['path'];
+            if (isset($url_info['query']) && !empty($url_info['query'])) {
+                $url .= '?'.$url_info['query'];
             }
         }
 
@@ -160,8 +157,8 @@ class Plugin extends \Singleton
 
     public function force_ssl()
     {
-        if (getenv('FORCE_SSL') && ! is_ssl()) {
-            wp_redirect('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 301);
+        if (getenv('FORCE_SSL') && !is_ssl()) {
+            wp_redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], 301);
             exit();
         }
     }
@@ -186,27 +183,27 @@ class Plugin extends \Singleton
         }
         $this->context = [
             'wp_title' => trim(wp_title('', false)),
-            'site'     => [
-                'url'           => home_url(),
-                'rdf'           => get_bloginfo('rdf_url'),
-                'rss'           => get_bloginfo('rss_url'),
-                'rss2'          => get_bloginfo('rss2_url'),
-                'atom'          => get_bloginfo('atom_url'),
-                'language'      => get_bloginfo('language'),
-                'charset'       => get_bloginfo('charset'),
-                'pingback'      => $this->pingback_url = get_bloginfo('pingback_url'),
-                'admin_email'   => get_bloginfo('admin_email'),
-                'name'          => get_bloginfo('name'),
-                'title'         => get_bloginfo('name'),
-                'description'   => get_bloginfo('description'),
+            'site' => [
+                'url' => home_url(),
+                'rdf' => get_bloginfo('rdf_url'),
+                'rss' => get_bloginfo('rss_url'),
+                'rss2' => get_bloginfo('rss2_url'),
+                'atom' => get_bloginfo('atom_url'),
+                'language' => get_bloginfo('language'),
+                'charset' => get_bloginfo('charset'),
+                'pingback' => $this->pingback_url = get_bloginfo('pingback_url'),
+                'admin_email' => get_bloginfo('admin_email'),
+                'name' => get_bloginfo('name'),
+                'title' => get_bloginfo('name'),
+                'description' => get_bloginfo('description'),
                 'canonical_url' => home_url($_SERVER['REQUEST_URI']),
             ],
-            'globals'  => [
-                'home_url'   => home_url('/'),
-                'theme_url'  => get_template_directory_uri(),
-                'images_url' => get_template_directory_uri() . '/assets/img',
+            'globals' => [
+                'home_url' => home_url('/'),
+                'theme_url' => get_template_directory_uri(),
+                'images_url' => get_template_directory_uri().'/assets/img',
             ],
-            'sloth'    => [
+            'sloth' => [
                 'current_layout' => basename($this->currentLayout, '.twig'),
             ],
         ];
@@ -214,35 +211,35 @@ class Plugin extends \Singleton
         if (is_single() || is_page()) {
             $qo = get_queried_object();
 
-            if (! isset($this->currentModel)) {
-                $a                  = call_user_func(
+            if (!isset($this->currentModel)) {
+                $a = call_user_func(
                     [$this->getModelClass($qo->post_type), 'find'],
                     [$qo->ID]
                 );
                 $this->currentModel = $a->first();
             }
-            $this->context['post']         = $this->currentModel;
+            $this->context['post'] = $this->currentModel;
             $this->context[$qo->post_type] = $this->currentModel;
         }
 
         if (is_tax()) {
             global $taxonomy;
-            if (! isset($this->currentModel)) {
-                $a                  = call_user_func(
+            if (!isset($this->currentModel)) {
+                $a = call_user_func(
                     [$this->getTaxonomyClass($taxonomy), 'find'],
                     [get_queried_object()->term_id]
                 );
                 $this->currentModel = $a->first();
             }
             $this->context['taxonomy'] = $this->currentModel;
-            $this->context[$taxonomy]  = $this->currentModel;
+            $this->context[$taxonomy] = $this->currentModel;
         }
 
         if (is_author()) {
-            if (! isset($this->currentModel)) {
+            if (!isset($this->currentModel)) {
                 $this->currentModel = User::find(\get_queried_object()->id);
             }
-            $this->context['user']   = $this->currentModel;
+            $this->context['user'] = $this->currentModel;
             $this->context['author'] = $this->currentModel;
         }
 
@@ -276,11 +273,11 @@ class Plugin extends \Singleton
      */
     public function getRelativeHrefs($input)
     {
-        return str_replace('href="' . rtrim(WP_HOME, '/'), 'href="', $input);
+        return str_replace('href="'.rtrim(WP_HOME, '/'), 'href="', $input);
     }
 
     /**
-     * Get a relative Permalink
+     * Get a relative Permalink.
      *
      * @param $input
      *
@@ -298,7 +295,7 @@ class Plugin extends \Singleton
      */
     public function getRelativeSrcs($input)
     {
-        return str_replace('src="' . rtrim(WP_HOME, '/'), 'src="' . rtrim(WP_HOME, '/'), $input);
+        return str_replace('src="'.rtrim(WP_HOME, '/'), 'src="'.rtrim(WP_HOME, '/'), $input);
     }
 
     public function getTaxonomyClass($key = '')
@@ -311,12 +308,12 @@ class Plugin extends \Singleton
         $template = null;
         $this->fixPagination();
         //@TODO: fix for older themes structure
-        if (! is_dir($this->current_theme_path . DS . 'View' . DS . 'Layout')) {
+        if (!is_dir($this->current_theme_path.DS.'View'.DS.'Layout')) {
             return;
         }
         global $post;
 
-        $post = is_object($post) ? $post : new \StdClass;
+        $post = is_object($post) ? $post : new \StdClass();
 
         if (Configure::read('theme.routes') && is_array(Configure::read('theme.routes'))) {
             $uri = $_SERVER['REQUEST_URI'];
@@ -325,7 +322,7 @@ class Plugin extends \Singleton
             if (false !== $pos = strpos($uri, '?')) {
                 $uri = substr($uri, 0, $pos);
             }
-            # @TODO this fix is ugly
+            // @TODO this fix is ugly
             $uri = rtrim(rawurldecode($uri), '/');
 
             $routes = Configure::read('theme.routes');
@@ -333,22 +330,21 @@ class Plugin extends \Singleton
             if (isset($routes[$uri])) {
                 $template = basename($routes[$uri]['Layout'], '.twig');
                 if (isset($routes[$uri]['ContentType'])) {
-                    header('Content-Type: ' . $routes[$uri]['ContentType']);
+                    header('Content-Type: '.$routes[$uri]['ContentType']);
                 }
             }
         }
-
 
         // Switch to regular WordPress Templates
         if (is_null($template)) {
             $layoutPaths = [];
             foreach ($this->container['view.finder']->getPaths() as $path) {
-                $layoutPaths[] = $path . DS . 'Layout';
+                $layoutPaths[] = $path.DS.'Layout';
             }
             $finder = new FoldersTemplateFinder($layoutPaths, ['twig']);
 
             $queryTemplate = new QueryTemplate($finder);
-            $template      = $queryTemplate->findTemplate(null, false);
+            $template = $queryTemplate->findTemplate(null, false);
         }
 
         if (post_password_required()) {
@@ -363,11 +359,10 @@ class Plugin extends \Singleton
                 )) {
                     preg_match('/(.+)-([0-9]+)x([0-9]+)\.(jpg|jpeg|png|gif)$/', $_SERVER['REQUEST_URI'], $matches);
 
-
                     $w = isset($matches[2]) ? $matches[2] : 1024;
                     $h = isset($matches[3]) ? $matches[3] : 768;
 
-                    header('Location: https://placebeard.it/' . $w . '/' . $h);
+                    header('Location: https://placebeard.it/'.$w.'/'.$h);
                 }
 
                 if (pathinfo($_SERVER['REQUEST_URI'], PATHINFO_EXTENSION) == 'svg') {
@@ -382,7 +377,6 @@ class Plugin extends \Singleton
 
         $view_name = basename($template, '.twig');
 
-
         if (in_array(
             pathinfo($_SERVER['REQUEST_URI'], PATHINFO_EXTENSION),
             ['jpg', 'jpeg', 'png', 'gif']
@@ -390,7 +384,7 @@ class Plugin extends \Singleton
             $mv = new Version($_SERVER['REQUEST_URI']);
         }
 
-        $view = View::make('Layout.' . $view_name);
+        $view = View::make('Layout.'.$view_name);
 
         echo $view
             ->with(
@@ -405,7 +399,7 @@ class Plugin extends \Singleton
         global $wp_version;
 
         return (object) [
-            'last_checked'    => time(),
+            'last_checked' => time(),
             'version_checked' => $wp_version,
         ];
     }
@@ -413,7 +407,7 @@ class Plugin extends \Singleton
     public function initModels()
     {
         foreach ($this->models as $k => $v) {
-            $model = new $v;
+            $model = new $v();
             $model->init();
 
             $reflection = new \ReflectionClass($model);
@@ -421,9 +415,9 @@ class Plugin extends \Singleton
             $modelClassName = $reflection->getShortName();
 
             $revisionClassNameSpace = $reflection->getNamespaceName();
-            $revisionClassName      = $reflection->getShortName() . 'Revision';
+            $revisionClassName = $reflection->getShortName().'Revision';
 
-            if (! class_exists($revisionClassName)) {
+            if (!class_exists($revisionClassName)) {
                 eval(
                 "
                 namespace $revisionClassNameSpace;
@@ -440,7 +434,7 @@ class Plugin extends \Singleton
     public function initTaxonomies()
     {
         foreach ($this->taxonomies as $k => $v) {
-            $tax = new $v;
+            $tax = new $v();
             $tax->init();
             unset($tax);
         }
@@ -461,11 +455,11 @@ class Plugin extends \Singleton
     public function is_rest()
     {
         $bIsRest = false;
-        if (function_exists('rest_url') && ! empty($_SERVER['REQUEST_URI'])) {
+        if (function_exists('rest_url') && !empty($_SERVER['REQUEST_URI'])) {
             $sRestUrlBase = get_rest_url(get_current_blog_id(), '/');
-            $sRestPath    = trim(parse_url($sRestUrlBase, PHP_URL_PATH), '/');
+            $sRestPath = trim(parse_url($sRestUrlBase, PHP_URL_PATH), '/');
             $sRequestPath = trim($_SERVER['REQUEST_URI'], '/');
-            $bIsRest      = (strpos($sRequestPath, $sRestPath) === 0);
+            $bIsRest = (strpos($sRequestPath, $sRestPath) === 0);
         }
 
         return $bIsRest;
@@ -478,31 +472,31 @@ class Plugin extends \Singleton
 
     public function loadApiControllers()
     {
-        foreach (glob(DIR_APP . 'Api' . DS . '*.php') as $file) {
+        foreach (glob(DIR_APP.'Api'.DS.'*.php') as $file) {
             $controller_name = $this->loadClassFromFile($file);
 
-            $controller = new $controller_name;
+            $controller = new $controller_name();
 
-            if (! is_subclass_of($controller, 'Sloth\Api\Controller')) {
+            if (!is_subclass_of($controller, 'Sloth\Api\Controller')) {
                 throw new \Exception('ApiController needs to extend Sloth\Api\Controller');
             }
 
-            $methods      = get_class_methods($controller);
+            $methods = get_class_methods($controller);
             $route_prefix = Utility::viewize((new \ReflectionClass($controller))->getShortName());
-            $routes       = [];
+            $routes = [];
 
             foreach ($methods as $method) {
                 if (substr($method, 0, 1) === '_' || $method === 'single') {
                     continue;
                 }
-                $routes[$route_prefix . '/' . Utility::viewize($method) . '(?:/(?P<id>\w+))?'] = $method;
+                $routes[$route_prefix.'/'.Utility::viewize($method).'(?:/(?P<id>\w+))?'] = $method;
             }
 
             if (method_exists($controller, 'single')) {
-                $routes[$route_prefix]                               = 'index';
-                $routes[$route_prefix . '(?:/(?P<id>[a-z0-9.-]+))?'] = 'single';
+                $routes[$route_prefix] = 'index';
+                $routes[$route_prefix.'(?:/(?P<id>[a-z0-9._-]+))?'] = 'single';
             } else {
-                $routes[$route_prefix . '(?:/(?P<id>[a-z0-9.-]+))?'] = 'index';
+                $routes[$route_prefix.'(?:/(?P<id>[a-z0-9._-]+))?'] = 'index';
             }
             foreach ($routes as $route => $action) {
                 add_action(
@@ -510,13 +504,13 @@ class Plugin extends \Singleton
                     function () use ($route, $action, $controller) {
                         register_rest_route(
                             'sloth/v1',
-                            '/' . $route,
+                            '/'.$route,
                             [
-                                'methods'  => ['GET', 'POST', 'DELETE', 'PUT'],
+                                'methods' => ['GET', 'POST', 'DELETE', 'PUT'],
                                 'callback' => function ($request) use ($controller, $action) {
                                     $controller->setRequest($request);
                                     $param = $request->get_url_params('id');
-                                    $data  = call_user_func_array([$controller, $action], [reset($param)]);
+                                    $data = call_user_func_array([$controller, $action], [reset($param)]);
 
                                     return new \WP_REST_Response(
                                         $data,
@@ -550,14 +544,14 @@ class Plugin extends \Singleton
             10
         );
 
-        $dir_app_includes = (DIR_APP . DS . 'Includes' . DS);
+        $dir_app_includes = (DIR_APP.DS.'Includes'.DS);
 
-        if (! is_dir($dir_app_includes)) {
+        if (!is_dir($dir_app_includes)) {
             return false;
         }
 
-        $files_include = glob($dir_app_includes . '*.php');
-        if (! count($files_include)) {
+        $files_include = glob($dir_app_includes.'*.php');
+        if (!count($files_include)) {
             return false;
         }
 
@@ -568,11 +562,11 @@ class Plugin extends \Singleton
 
     public function loadModels()
     {
-        foreach (glob(DIR_APP . 'Model' . DS . '*.php') as $file) {
+        foreach (glob(DIR_APP.'Model'.DS.'*.php') as $file) {
             $model_name = $this->loadClassFromFile($file);
 
-            $model = new $model_name;
-            if (! $model->register) {
+            $model = new $model_name();
+            if (!$model->register) {
                 continue;
             }
 
@@ -597,35 +591,35 @@ class Plugin extends \Singleton
 
     public function loadModules()
     {
-        foreach (glob(get_template_directory() . DS . 'Module' . DS . '*Module.php') as $file) {
+        foreach (glob(get_template_directory().DS.'Module'.DS.'*Module.php') as $file) {
             $module_name = $this->loadClassFromFile($file);
 
             if (is_array($module_name::$layotter) && class_exists('\Layotter')) {
-                $class_name = substr(strrchr($module_name, "\\"), 1);
+                $class_name = substr(strrchr($module_name, '\\'), 1);
 
                 eval(
                 "class $class_name extends \Sloth\Module\LayotterElement {
 					static \$module = '$module_name';
 				}"
                 );
-                \Layotter::register_element(strtolower(substr(strrchr($module_name, "\\"), 1)), $class_name);
+                \Layotter::register_element(strtolower(substr(strrchr($module_name, '\\'), 1)), $class_name);
             }
             if ($module_name::$json) {
-                $m = new $module_name;
-                #$reflect = new ReflectionClass($object);
+                $m = new $module_name();
+                //$reflect = new ReflectionClass($object);
                 add_action(
-                    'wp_ajax_nopriv_' . $m->getAjaxAction(),
-                    [new $module_name, 'getJSON']
+                    'wp_ajax_nopriv_'.$m->getAjaxAction(),
+                    [new $module_name(), 'getJSON']
                 );
                 add_action(
-                    'wp_ajax_' . $m->getAjaxAction(),
-                    [new $module_name, 'getJSON']
+                    'wp_ajax_'.$m->getAjaxAction(),
+                    [new $module_name(), 'getJSON']
                 );
 
                 $route = [Utility::viewize(Utility::normalize(class_basename($m)))];
                 if (is_array($module_name::$json) && isset($module_name::$json['params'])) {
                     foreach ($module_name::$json['params'] as $param) {
-                        $route[] = '(?P<' . $param . '>[a-z0-9-]+)';
+                        $route[] = '(?P<'.$param.'>[a-z0-9-]+)';
                     }
                 }
 
@@ -634,9 +628,9 @@ class Plugin extends \Singleton
                     function () use ($route, $m) {
                         register_rest_route(
                             'sloth/v1/module',
-                            '/' . implode('/', $route),
+                            '/'.implode('/', $route),
                             [
-                                'methods'  => ['GET', 'POST'],
+                                'methods' => ['GET', 'POST'],
                                 'callback' => function (\WP_REST_Request $request) use ($m) {
                                     $m->getJSON($request->get_params());
                                 },
@@ -653,9 +647,9 @@ class Plugin extends \Singleton
 
     public function loadTaxonomies()
     {
-        foreach (glob(DIR_APP . 'Taxonomy' . DS . '*.php') as $file) {
+        foreach (glob(DIR_APP.'Taxonomy'.DS.'*.php') as $file) {
             $taxonomy_name = $this->loadClassFromFile($file);
-            $taxonomy      = new $taxonomy_name;
+            $taxonomy = new $taxonomy_name();
             if (method_exists($taxonomy, 'register')) {
                 $taxonomy->register();
             }
@@ -672,7 +666,7 @@ class Plugin extends \Singleton
                 $fixed_uploads_array = [];
                 foreach ($uploads_array as $part => $value) {
                     if (in_array($part, ['path', 'url', 'basedir', 'baseurl'])) {
-                        $fixed_uploads_array[$part] = str_replace(WP_PATH . '/..', '', $value);
+                        $fixed_uploads_array[$part] = str_replace(WP_PATH.'/..', '', $value);
                     } else {
                         $fixed_uploads_array[$part] = $value;
                     }
@@ -683,9 +677,8 @@ class Plugin extends \Singleton
         );
     }
 
-
     /**
-     * register menus for the theme
+     * register menus for the theme.
      */
     public function register_menus()
     {
@@ -698,7 +691,7 @@ class Plugin extends \Singleton
     }
 
     /**
-     * register image sizes configured in theme.image-sizes
+     * register image sizes configured in theme.image-sizes.
      */
     public function registerImageSizes()
     {
@@ -707,9 +700,9 @@ class Plugin extends \Singleton
             foreach ($image_sizes as $name => $options) {
                 $options = array_merge(
                     [
-                        'width'   => 800,
-                        'height'  => 600,
-                        'crop'    => false,
+                        'width' => 800,
+                        'height' => 600,
+                        'crop' => false,
                         'upscale' => false,
                     ],
                     $options
@@ -720,14 +713,14 @@ class Plugin extends \Singleton
     }
 
     /**
-     * register menus
+     * register menus.
      *
      * @throws \Exception
      */
     public function registerNavMenus()
     {
         if (Configure::read('theme.menus')) {
-            if (! is_array(Configure::read('theme.menus'))) {
+            if (!is_array(Configure::read('theme.menus'))) {
                 throw new \Exception('theme.menus must be an array!');
             }
             foreach (Configure::read('theme.menus') as $location => $name) {
@@ -737,7 +730,7 @@ class Plugin extends \Singleton
     }
 
     /**
-     * Get a relative Permalink
+     * Get a relative Permalink.
      *
      * @param $input
      *
@@ -750,15 +743,15 @@ class Plugin extends \Singleton
 
     public function trackDataChange()
     {
-        if (! $this->isDevEnv()) {
+        if (!$this->isDevEnv()) {
             return false;
         }
-        file_put_contents(DIR_CACHE . DS . 'reload', time());
+        file_put_contents(DIR_CACHE.DS.'reload', time());
     }
 
     protected function fixPagination()
     {
-        /**
+        /*
          * hand current page from get to Illuminate
          */
         if (isset($_GET['page'])) {
@@ -768,7 +761,7 @@ class Plugin extends \Singleton
             });
         }
         global $wp_query;
-        /**
+        /*
          * hand current page from wp_query to Illuminate
          */
         if (isset($wp_query->query['page'])) {
@@ -812,7 +805,6 @@ class Plugin extends \Singleton
         Configure::write('layotter_prepare_fields', 2);
     }
 
-
     private function addFilters()
     {
         ACFHelper::getInstance();
@@ -822,14 +814,13 @@ class Plugin extends \Singleton
         add_action(
             'pre_get_posts',
             function ($query) {
-                if (! defined('REST_REQUEST')) {
+                if (!defined('REST_REQUEST')) {
                     $query->set('posts_per_page', -1);
                 }
 
                 return $query;
             }
         );
-
 
         $this->fixRoutes();
         if (Configure::read('urls.relative')) {
@@ -906,11 +897,11 @@ border-collapse: collapse;
             }
         );
 
-        /**
+        /*
          * For now we give up Controllers an Routing
          */
-        #add_action( 'init', [ Sloth::getInstance(), 'setRouter' ], 20 );
-        # add_action( 'template_redirect', [ Sloth::getInstance(), 'dispatchRouter' ], 20 );
+        //add_action( 'init', [ Sloth::getInstance(), 'setRouter' ], 20 );
+        // add_action( 'template_redirect', [ Sloth::getInstance(), 'dispatchRouter' ], 20 );
 
         add_action('template_redirect', [$this, 'getTemplate'], 20);
 
@@ -969,13 +960,13 @@ border-collapse: collapse;
 
     private function loadControllers()
     {
-        foreach (glob(\get_template_directory() . DS . 'Controller' . DS . '*Controller.php') as $file) {
-            include($file);
+        foreach (glob(\get_template_directory().DS.'Controller'.DS.'*Controller.php') as $file) {
+            include $file;
         }
     }
 
     /**
-     * Make all Links root relative
+     * Make all Links root relative.
      */
     private function makeLinksRelative()
     {
@@ -998,7 +989,7 @@ border-collapse: collapse;
     }
 
     /**
-     * Make all Uploads root relative
+     * Make all Uploads root relative.
      */
     private function makeUploadsRelative()
     {
@@ -1012,7 +1003,7 @@ border-collapse: collapse;
     }
 
     /**
-     * Remove all unnecessary refrences to WordPress from wp_head
+     * Remove all unnecessary refrences to WordPress from wp_head.
      */
     private function obfuscateWP()
     {
@@ -1045,7 +1036,6 @@ border-collapse: collapse;
 
         // Remove oEmbed-specific JavaScript from the front-end and back-end.
         remove_action('wp_head', 'wp_oembed_add_host_js');
-
 
         // Inline Kommentarstyles aus wp_head schmeissen
         add_action(
