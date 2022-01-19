@@ -1,11 +1,12 @@
 {
-    "name": "sixmonkey/sloth",
+    "name": "folivoro/sloth",
     "authors": [
         {
             "name": "Ben Kremer",
             "email": "hallo@benkremer.de"
         }
     ],
+    "license": "GPL-2.0",
     "require": {
         "brain/hierarchy": "^2.3",
         "cakephp/utility": "^3.5",
@@ -31,9 +32,9 @@
         "nofutur3/tracy-gitpanel": "^0.9.4",
         "org_heigl/hyphenator": "^2.2",
         "roots/wp-password-bcrypt": "^1.0",
-        "spatie/emoji": "^2.0",
-        "spatie/image": "^1.5",
         "staudenmeir/belongs-to-through": "v2.9",
+        "spatie/image": "1.10.4",
+        "spatie/emoji": "^2.0",
         "tracy/tracy": "2.5.6",
         "twig/twig": "^1.0",
         "vlucas/phpdotenv": "^2.4"
