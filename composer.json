@@ -34,7 +34,7 @@
         "spatie/emoji": "^2.0",
         "spatie/image": "^1.5",
         "staudenmeir/belongs-to-through": "v2.9",
-        "tracy/tracy": "2.5.6",
+        "tracy/tracy": "2.7.5",
         "twig/twig": "^1.0",
         "vlucas/phpdotenv": "^2.4"
     },
