@@ -210,16 +210,28 @@ class Plugin extends \Singleton
 
         if (is_single() || is_page()) {
             $qo = get_queried_object();
+            $postType = $qo->post_type;
 
-            if (!isset($this->currentModel)) {
-                $a = call_user_func(
-                    [$this->getModelClass($qo->post_type), 'find'],
-                    [$qo->ID]
-                );
-                $this->currentModel = $a->first();
+            // get latest revision if it's a preview url
+            if ($_GET['preview']) {
+                $qo = acf_get_post_latest_revision($qo->ID);
             }
-            $this->context['post'] = $this->currentModel;
-            $this->context[$qo->post_type] = $this->currentModel;
+
+            if ( ! isset($this->currentModel)) {
+                // get class of original post type
+                $className = $this->getModelClass($postType);
+                $currentModel = new $className;
+                // set post type to revision/draft/original post type
+                $currentModel->postType = $qo->post_type;
+
+                $currentPosts = call_user_func([$currentModel, 'find'], [$qo->ID]);
+
+                unset($currentModel);
+                $this->currentModel = $currentPosts->first();
+            }
+
+            $this->context['post']    = $this->currentModel;
+            $this->context[$postType] = $this->currentModel;
         }
 
         if (is_tax()) {
