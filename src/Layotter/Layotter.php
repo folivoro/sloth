@@ -326,7 +326,7 @@ final class Layotter extends \Singleton
      *
      * @return string
      */
-    final private static function get_post_type()
+    private static function get_post_type()
     {
         global $post;
 
@@ -338,7 +338,7 @@ final class Layotter extends \Singleton
      *
      * @return string
      */
-    final private static function get_template()
+    private static function get_template()
     {
         $pathinfo = pathinfo(get_page_template_slug());
 

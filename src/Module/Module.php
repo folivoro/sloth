@@ -152,7 +152,7 @@ class Module
         return Hash::get($this->viewVars, $k);
     }
 
-    final private function getTemplate()
+    private function getTemplate()
     {
         if (is_null($this->template)) {
             $class = get_class($this);
@@ -168,7 +168,7 @@ class Module
         $this->template = str_replace('.', DS, ucfirst($this->template));
     }
 
-    final private function makeView()
+    private function makeView()
     {
         $this->getTemplate();
         $this->view = View::make($this->template);
