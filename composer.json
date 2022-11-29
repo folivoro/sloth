@@ -7,6 +7,7 @@
         }
     ],
     "require": {
+        "bordoni/phpass": "^0.3.6",
         "brain/hierarchy": "^2.3",
         "cakephp/utility": "^3.5",
         "corcel/acf": "^2.0",
@@ -45,7 +46,11 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "composer/installers": true
+        }
     },
     "extra": {
         "hooks": {

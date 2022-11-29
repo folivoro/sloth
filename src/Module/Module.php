@@ -35,7 +35,7 @@ class Module
 
     final public function getAjaxAction()
     {
-        return 'module_'.Utility::underscore(class_basename($this));
+        return 'module_' . Utility::underscore(class_basename($this));
     }
 
     final public function getAjaxUrl()
@@ -43,7 +43,7 @@ class Module
         return str_replace(
             home_url(),
             '',
-            \admin_url('admin-ajax.php?action='.$this->getAjaxAction())
+            \admin_url('admin-ajax.php?action=' . $this->getAjaxAction())
         );
     }
 
@@ -75,7 +75,7 @@ class Module
      */
     public function render()
     {
-        if (!$this->doing_ajax) {
+        if (! $this->doing_ajax) {
             $this->set($GLOBALS['sloth::plugin']->getContext(), false);
         }
         $this->set('ajax_url', $this->getAjaxUrl());
@@ -102,12 +102,12 @@ class Module
         if (is_array($key)) {
             $override = is_bool($value) ? $value : true;
             foreach ($key as $k => $v) {
-                if ($override || !$this->isSet($k)) {
+                if ($override || ! $this->isSet($k)) {
                     $this->set($k, $v);
                 }
             }
         } else {
-            if ($override || !$this->isSet($key)) {
+            if ($override || ! $this->isSet($key)) {
                 $this->viewVars[$key] = $this->_prepareValue($value);
             }
         }
@@ -162,8 +162,8 @@ class Module
                 substr(strrchr($class, '\\'), 1)
             ));
         }
-        if (!strstr($this->template, '.')) {
-            $this->template = $this->viewPrefix.'.'.$this->template;
+        if (! strstr($this->template, '.')) {
+            $this->template = $this->viewPrefix . '.' . $this->template;
         }
         $this->template = str_replace('.', DS, ucfirst($this->template));
     }
