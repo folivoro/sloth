@@ -75,7 +75,7 @@ class Image
             $this->url  = apply_filters('sloth_get_attachment_link', $url);
             $this->file = realpath(WP_CONTENT_DIR . DS . 'uploads' . DS . $this->post->meta->_wp_attached_file);
 
-            $this->isResizable = @is_array(getimagesize($this->file));
+            $this->isResizable = $this->file ? @is_array(getimagesize($this->file)) : false;
 
             $this->sizes = $this->sizes();
         } else {
