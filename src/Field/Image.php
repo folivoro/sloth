@@ -95,11 +95,11 @@ class Image
         }
 
         if ($what === 'width') {
-            return $this->metaData['width'];
+            return isset($this->metaData['width']) ? $this->metaData['width'] : '';
         }
 
         if ($what === 'height') {
-            return $this->metaData['height'];
+            return isset($this->metaData['height']) ? $this->metaData['height'] : '';
         }
 
         if ($what === 'sizes') {
