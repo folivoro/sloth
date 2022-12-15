@@ -18,6 +18,7 @@ class Image
     public $description;
     public $sizes = [];
     public $url;
+
     protected $attributeTranslations = [
         'caption'     => 'post_excerpt',
         'description' => 'post_content',
@@ -71,6 +72,8 @@ class Image
 
             $this->postID   = $this->post->ID;
             $this->metaData = unserialize($this->meta->_wp_attachment_metadata);
+            $this->width = (int)$this->width;
+            $this->height = (int)$this->height;
 
             $this->url  = apply_filters('sloth_get_attachment_link', $url);
             $this->file = realpath(WP_CONTENT_DIR . DS . 'uploads' . DS . $this->post->meta->_wp_attached_file);
@@ -95,15 +98,11 @@ class Image
         }
 
         if ($what === 'width') {
-            return isset($this->metaData['width']) ? $this->metaData['width'] : '';
+            return isset($this->metaData['width']) ? (int)$this->metaData['width'] : '';
         }
 
         if ($what === 'height') {
-            return isset($this->metaData['height']) ? $this->metaData['height'] : '';
-        }
-
-        if ($what === 'sizes') {
-            return $this->sizes();
+            return isset($this->metaData['height']) ? (int)$this->metaData['height'] : '';
         }
 
         if (isset($this->attributeTranslations[ $what ])) {
