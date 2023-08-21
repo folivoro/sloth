@@ -94,7 +94,7 @@ class Plugin extends \Singleton
             }
             // bail if plugin is blacklisted
             $pi = pathinfo($plugin);
-            if (in_array($pi['dirname'], Configure::read('plugins.autoactivate.blacklist'))) {
+            if (in_array($pi['dirname'], (array)Configure::read('plugins.autoactivate.blacklist'))) {
                 continue;
             }
 
