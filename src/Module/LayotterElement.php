@@ -37,6 +37,7 @@ class LayotterElement extends \Layotter_Element
                 } elseif ($field['type'] == 'file') {
                     $v = $fields[ $field['name'] ]['filename'];
                 } elseif ($field['type'] == 'repeater') {
+                    if (!$fields[ $field['name'] ]) continue;
                     $v = count($fields[ $field['name'] ]) . ' ' . __('Elemente', 'sloth');
                 } elseif (is_object($fields[ $field['name'] ]) || is_object($fields[ $field['name'] ]) || $field['type'] == 'true_false' || $field['type'] == 'taxonomy') {
                     continue;
