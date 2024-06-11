@@ -9,6 +9,9 @@ use Sloth\Configure\Configure;
 use Sloth\Core\ServiceProvider;
 use Sloth\View\Engines\TwigEngine;
 use Sloth\View\Extensions\SlothTwigExtension;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -73,7 +76,7 @@ class ViewServiceProvider extends ServiceProvider
         $container->singleton(
             'twig.loader',
             function () {
-                return new \Twig_Loader_Filesystem(DIR_ROOT);
+                return new FilesystemLoader(DIR_ROOT);
             }
         );
 
@@ -81,7 +84,7 @@ class ViewServiceProvider extends ServiceProvider
         $container->singleton(
             'twig',
             function ($container) {
-                return new \Twig_Environment($container['twig.loader'], [
+                return new Environment($container['twig.loader'], [
                     'auto_reload' => true,
                     'cache'       => $container['path.cache'] . 'Twig',
                     'autoescape'  => (bool) Configure::read('twig.autoescape'),
@@ -90,7 +93,7 @@ class ViewServiceProvider extends ServiceProvider
         );
 
         // Add the dump Twig extension.
-        $container['twig']->addExtension(new \Twig_Extension_Debug());
+        $container['twig']->addExtension(new DebugExtension());
 
         // Check if debug constant exists and set to true.
         if (defined('WP_DEBUG') && WP_DEBUG) {

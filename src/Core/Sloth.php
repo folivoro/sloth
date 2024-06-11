@@ -3,10 +3,11 @@
 namespace Sloth\Core;
 
 use Sloth\Debugger\SlothBarPanel;
+use Sloth\Facades\Facade;
 use Tracy\Debugger;
 use Tracy\Dumper;
 
-class Sloth extends \Singleton
+class Sloth extends \Sloth\Core\Singleton
 {
     public $container;
 
@@ -16,10 +17,10 @@ class Sloth extends \Singleton
      * @var array
      */
     private $class_aliases = [
-        'Route'      => '\Sloth\Facades\Route',
-        'View'       => '\Sloth\Facades\View',
-        'Configure'  => '\Sloth\Facades\Configure',
-        'Validator'  => '\Sloth\Facades\Validation',
+        'Route' => '\Sloth\Facades\Route',
+        'View' => '\Sloth\Facades\View',
+        'Configure' => '\Sloth\Facades\Configure',
+        'Validator' => '\Sloth\Facades\Validation',
         'Deployment' => '\Sloth\Facades\Deployment',
         'Customizer' => '\Sloth\Facades\Customizer',
     ];
@@ -28,22 +29,24 @@ class Sloth extends \Singleton
 
     public function __construct()
     {
+        parent::__construct();
         /**
          * enable debugging where needed
          */
+#        \Tracy\OutputDebugger::enable();
         $this->setDebugging();
 
         /*
          * Instantiate the service container for the project.
          */
-        $this->container = new \Sloth\Core\Application();
+        $this->container = new Application();
 
         $this->container->addPath('cache', DIR_CACHE);
 
         /*
          * Setup the facade.
          */
-        \Sloth\Facades\Facade::setFacadeApplication($this->container);
+        Facade::setFacadeApplication($this->container);
 
 
         $this->registerProviders();
@@ -110,7 +113,7 @@ class Sloth extends \Singleton
     private function setAliases()
     {
         foreach ($this->class_aliases as $alias => $class) {
-            if (! class_exists($alias)) {
+            if (!class_exists($alias)) {
                 class_alias($class, $alias);
             }
         }
@@ -121,17 +124,16 @@ class Sloth extends \Singleton
      */
     private function setDebugging()
     {
-        $mode                   = WP_DEBUG === true ? Debugger::DEVELOPMENT : Debugger::PRODUCTION;
+        $mode = WP_DEBUG === true ? Debugger::DEVELOPMENT : Debugger::PRODUCTION;
         Debugger::$showLocation = Dumper::LOCATION_CLASS | Dumper::LOCATION_LINK | Dumper::LOCATION_SOURCE;  // Shows both paths to the classes and link to where the dump() was called
-        $logDirectoy            = DIR_ROOT . DS . 'logs';
-        if (! is_dir($logDirectoy)) {
+        $logDirectoy = DIR_ROOT . DS . 'logs';
+        if (!is_dir($logDirectoy)) {
             mkdir($logDirectoy);
         }
-        Debugger::getBar()->addPanel(new \Nofutur3\GitPanel\Diagnostics\Panel());
         Debugger::getBar()->addPanel(new \Milo\VendorVersions\Panel);
         Debugger::getBar()->addPanel(new SlothBarPanel());
         /* TODO: could be nicer? */
-        if (WP_DEBUG && ! in_array(basename($_SERVER['PHP_SELF']), $this->dont_debug)) {
+        if (WP_DEBUG && !in_array(basename($_SERVER['PHP_SELF']), $this->dont_debug)) {
             Debugger::enable($mode, DIR_ROOT . DS . 'logs');
         }
         if (getenv('SLOTH_DEBUGGER_EDITOR')) {

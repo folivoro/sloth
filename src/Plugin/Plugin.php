@@ -4,19 +4,17 @@ namespace Sloth\Plugin;
 
 use Brain\Hierarchy\Finder\FoldersTemplateFinder;
 use Brain\Hierarchy\QueryTemplate;
-use function class_exists;
 use Corcel\Model\User;
-use function debug;
-use function post_password_required;
 use Sloth\ACF\ACFHelper;
 use Sloth\Admin\Customizer;
-use Sloth\Core\Sloth;
 use Sloth\Facades\Configure;
 use Sloth\Facades\View;
 use Sloth\Media\Version;
 use Sloth\Utility\Utility;
+use function class_exists;
+use function post_password_required;
 
-class Plugin extends \Singleton
+class Plugin extends \Sloth\Core\Singleton
 {
     public $current_theme_path;
     private $container;
