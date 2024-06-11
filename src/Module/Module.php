@@ -71,23 +71,23 @@ class Module
     }
 
     /**
-     * render the view
+     * render the view.
      */
     public function render()
     {
-        if ( ! $this->doing_ajax) {
+        if (! $this->doing_ajax) {
             $this->set($GLOBALS['sloth::plugin']->getContext(), false);
         }
         $this->set('ajax_url', $this->getAjaxUrl());
         $this->beforeRender();
         $this->makeView();
-        $vars   = array_merge($GLOBALS['sloth::plugin']->getContext(), $this->viewVars);
+        $vars = array_merge($GLOBALS['sloth::plugin']->getContext(), $this->viewVars);
         $output = $this->view->with($vars)->render();
         if ($this->render) {
             if ($this->wrapInRow) {
                 $output = View::make('Layotter.row')->with([
                     'content' => $output,
-                    'options' => (array)$this->wrapInRow,
+                    'options' => (array) $this->wrapInRow,
                 ])->render();
             }
             echo $output;
@@ -127,14 +127,14 @@ class Module
     {
         if (is_a($value, 'WP_Post')) {
             $model_name = $GLOBALS['sloth::plugin']->getPostTypeClass($value->post_type);
-            $post       = call_user_func([$model_name, 'find'], $value->ID);
-            $value      = $post;
+            $post = call_user_func([$model_name, 'find'], $value->ID);
+            $value = $post;
         }
 
         return $value;
     }
 
-    protected function beforeGetJSON()
+    protected function beforeGetJSON(array $payload)
     {
     }
 
@@ -152,23 +152,23 @@ class Module
         return Hash::get($this->viewVars, $k);
     }
 
-    final private function getTemplate()
+    private function getTemplate()
     {
         if (is_null($this->template)) {
-            $class          = get_class($this);
+            $class = get_class($this);
             $this->template = \Cake\Utility\Inflector::dasherize(preg_replace(
                 '/Module$/',
                 '',
-                substr(strrchr($class, "\\"), 1)
+                substr(strrchr($class, '\\'), 1)
             ));
         }
-        if ( ! strstr($this->template, '.')) {
+        if (! strstr($this->template, '.')) {
             $this->template = $this->viewPrefix . '.' . $this->template;
         }
         $this->template = str_replace('.', DS, ucfirst($this->template));
     }
 
-    final private function makeView()
+    private function makeView()
     {
         $this->getTemplate();
         $this->view = View::make($this->template);

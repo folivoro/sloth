@@ -18,6 +18,7 @@ class Image
     public $description;
     public $sizes = [];
     public $url;
+
     protected $attributeTranslations = [
         'caption'     => 'post_excerpt',
         'description' => 'post_content',
@@ -47,7 +48,7 @@ class Image
      */
     public function __construct($url)
     {
-        if (is_null($url)) {
+        if (is_null($url) || !$url) {
             $this->url = null;
 
             return;
@@ -59,7 +60,8 @@ class Image
 
         if ((int) $url) {
             $this->post = Post::find($url);
-            $url        = is_object($this->post) ? $this->post->url : $this->post['url'];
+
+            $url = is_object($this->post) ? $this->post->url : $this->post['url'];
         } else {
             $this->post = Post::where('guid', 'like', str_replace(WP_CONTENT_URL, '%', $url))->first();
         }
@@ -75,7 +77,10 @@ class Image
             $this->url  = apply_filters('sloth_get_attachment_link', $url);
             $this->file = realpath(WP_CONTENT_DIR . DS . 'uploads' . DS . $this->post->meta->_wp_attached_file);
 
-            $this->isResizable = @is_array(getimagesize($this->file));
+            $this->isResizable = $this->file ? @is_array(getimagesize($this->file)) : false;
+
+            $this->width = (int)$this->width;
+            $this->height = (int)$this->height;
 
             $this->sizes = $this->sizes();
         } else {
@@ -95,15 +100,36 @@ class Image
         }
 
         if ($what === 'width') {
-            return $this->metaData['width'];
+            if (isset($this->metaData['width'])) {
+                return (int)$this->metaData['width'];
+            }
+
+            if (str_contains($this->url, '.svg')) {
+                $svg = simplexml_load_file($this->url);
+
+                if ($svg && isset($svg->attributes()->viewBox)) {
+                    // $height = (int)explode(' ', $svg->attributes()->viewBox)[3];
+                    return (int)explode(' ', $svg->attributes()->viewBox)[2];
+                }
+            }
+
+            return '';
         }
 
         if ($what === 'height') {
-            return $this->metaData['height'];
-        }
+            if (isset($this->metaData['height'])) {
+                return (int)$this->metaData['height'];
+            }
 
-        if ($what === 'sizes') {
-            return $this->sizes();
+            if (str_contains($this->url, '.svg')) {
+                $svg = simplexml_load_file($this->url);
+
+                if ($svg && isset($svg->attributes()->viewBox)) {
+                    return (int)explode(' ', $svg->attributes()->viewBox)[3];
+                }
+            }
+
+            return '';
         }
 
         if (isset($this->attributeTranslations[ $what ])) {

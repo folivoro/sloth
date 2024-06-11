@@ -9,6 +9,8 @@ namespace Sloth\Configure;
 
 use Cake\Utility\Hash;
 
+include __DIR__ . '/../singleton.php';
+
 class Configure extends \Singleton
 {
     /**
