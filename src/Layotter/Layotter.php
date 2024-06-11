@@ -2,13 +2,13 @@
 
 namespace Sloth\Layotter;
 
-use \Brain\Hierarchy\QueryTemplate;
 use Brain\Hierarchy\Finder\FoldersTemplateFinder;
+use Brain\Hierarchy\QueryTemplate;
 use Sloth\Facades\Configure;
 use Sloth\Facades\View;
 use Sloth\Utility\Utility;
 
-final class Layotter extends \Singleton
+final class Layotter extends \Sloth\Core\Singleton
 {
     public static $disabled_post_types = ['attachement'];
     public static $enabled_post_types = [];

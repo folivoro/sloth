@@ -7,5 +7,4 @@ node_modules
 /.vagrant
 cghooks.lock
 .php_cs.cache
-
-
+hooks

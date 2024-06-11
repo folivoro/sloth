@@ -1,5 +1,6 @@
 <?php
 
+namespace Sloth\Core;
 /**
  * Class Singleton
  *
@@ -8,7 +9,7 @@
  */
 class Singleton
 {
-    private static $instances = [];
+    private static array $instances = [];
 
     /**
      * Singleton constructor.
@@ -20,34 +21,16 @@ class Singleton
     }
 
     /**
-     * Singleton clone method
-     *
-     * protected so it can't be called outside of the class
-     */
-    protected function __clone()
-    {
-    }
-
-    /**
-     * Singleton wakeup (unserialize) method
-     *
-     * protected so it can't be called outside of the class
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
      * return an instance of the called class
      *
-     * @return mixed
+     * @return mixed|\static
      */
     public static function getInstance()
     {
 
         // late-static-bound class name
         $classname = get_called_class();
-        if (! isset(self::$instances[$classname])) {
+        if (!isset(self::$instances[$classname])) {
             self::$instances[$classname] = new static;
         }
 

@@ -4,7 +4,7 @@ namespace Sloth\Admin;
 
 use Sloth\Facades\View;
 
-class Customizer extends \Singleton
+class Customizer extends \Sloth\Core\Singleton
 {
     public static $add_menu_items = [];
     public static $add_menu_separators = [];

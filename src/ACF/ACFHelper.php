@@ -4,7 +4,7 @@ namespace Sloth\ACF;
 
 use Sloth\Field\Image;
 
-class ACFHelper extends \Singleton
+class ACFHelper extends \Sloth\Core\Singleton
 {
     public function __construct()
     {
