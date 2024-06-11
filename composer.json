@@ -22,7 +22,7 @@
         "illuminate/pagination": "^8",
         "illuminate/validation": "^8",
         "illuminate/view": "^8",
-        "jgrossi/corcel": "^v5",
+        "jgrossi/corcel": "^5",
         "jjgrainger/posttypes": "^2.0",
         "jover/singleton": "^1.0",
         "kdyby/html-validator-panel": "^1.1",
@@ -42,14 +42,33 @@
         "brainmaestro/composer-git-hooks": "^2.8",
         "ergebnis/composer-normalize": "^2.11"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Sloth\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "vendor/",
+            "composer.json",
+            "composer.lock",
+            "README.md",
+            "docs/"
+        ]
+    },
     "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "ergebnis/composer-normalize": true
+        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "ergebnis/composer-normalize": true,
-            "composer/installers": true
-        }
+        "sort-packages": true
     },
     "extra": {
         "hooks": {
@@ -62,16 +81,6 @@
             ]
         }
     },
-    "autoload": {
-        "psr-4": {
-            "Sloth\\": "src/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "scripts": {
         "post-install-cmd": "cghooks add --ignore-lock",
         "post-update-cmd": "cghooks update"
