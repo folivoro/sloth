@@ -30,7 +30,7 @@ class Plugin extends \Sloth\Core\Singleton
      */
     public function __construct()
     {
-        if (! is_blog_installed()) {
+        if (!is_blog_installed()) {
             return;
         }
 
@@ -80,7 +80,7 @@ class Plugin extends \Sloth\Core\Singleton
 
     public function autoloadPlugins()
     {
-        if (! Configure::read('plugins.autoactivate')) {
+        if (!Configure::read('plugins.autoactivate')) {
             return;
         }
 
@@ -108,7 +108,7 @@ class Plugin extends \Sloth\Core\Singleton
         $used = [];
         foreach ($menu as $offset => $menu_item) {
             $pi = pathinfo($menu_item[2], PATHINFO_EXTENSION);
-            if (! preg_match('/^php/', $pi)) {
+            if (!preg_match('/^php/', $pi)) {
                 continue;
             }
             if (in_array($menu_item[2], $used)) {
@@ -123,9 +123,9 @@ class Plugin extends \Sloth\Core\Singleton
     {
         $url_info = parse_url($url);
 
-        if (! preg_match('/^\/cms/', $url_info['path'])) {
+        if (!preg_match('/^\/cms/', $url_info['path'])) {
             $url = $url_info['scheme'] . '://' . $url_info['host'] . '/cms' . $url_info['path'];
-            if (isset($url_info['query']) && ! empty($url_info['query'])) {
+            if (isset($url_info['query']) && !empty($url_info['query'])) {
                 $url .= '?' . $url_info['query'];
             }
         }
@@ -155,7 +155,7 @@ class Plugin extends \Sloth\Core\Singleton
 
     public function force_ssl()
     {
-        if (getenv('FORCE_SSL') && ! is_ssl()) {
+        if (getenv('FORCE_SSL') && !is_ssl()) {
             wp_redirect('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 301);
             exit();
         }
@@ -215,7 +215,7 @@ class Plugin extends \Sloth\Core\Singleton
                 $qo = acf_get_post_latest_revision($qo->ID);
             }
 
-            if (! isset($this->currentModel)) {
+            if (!isset($this->currentModel)) {
                 // get class of original post type
                 $className = $this->getModelClass($postType);
                 $currentModel = new $className;
@@ -228,13 +228,13 @@ class Plugin extends \Sloth\Core\Singleton
                 $this->currentModel = $currentPosts->first();
             }
 
-            $this->context['post']    = $this->currentModel;
+            $this->context['post'] = $this->currentModel;
             $this->context[$postType] = $this->currentModel;
         }
 
         if (is_tax()) {
             global $taxonomy;
-            if (! isset($this->currentModel)) {
+            if (!isset($this->currentModel)) {
                 $a = call_user_func(
                     [$this->getTaxonomyClass($taxonomy), 'find'],
                     [get_queried_object()->term_id]
@@ -246,7 +246,7 @@ class Plugin extends \Sloth\Core\Singleton
         }
 
         if (is_author()) {
-            if (! isset($this->currentModel)) {
+            if (!isset($this->currentModel)) {
                 $this->currentModel = User::find(\get_queried_object()->id);
             }
             $this->context['user'] = $this->currentModel;
@@ -318,7 +318,7 @@ class Plugin extends \Sloth\Core\Singleton
         $template = null;
         $this->fixPagination();
         //@TODO: fix for older themes structure
-        if (! is_dir($this->current_theme_path . DS . 'View' . DS . 'Layout')) {
+        if (!is_dir($this->current_theme_path . DS . 'View' . DS . 'Layout')) {
             return;
         }
         global $post;
@@ -408,7 +408,7 @@ class Plugin extends \Sloth\Core\Singleton
     {
         global $wp_version;
 
-        return (object) [
+        return (object)[
             'last_checked' => time(),
             'version_checked' => $wp_version,
         ];
@@ -427,7 +427,7 @@ class Plugin extends \Sloth\Core\Singleton
             $revisionClassNameSpace = $reflection->getNamespaceName();
             $revisionClassName = $reflection->getShortName() . 'Revision';
 
-            if (! class_exists($revisionClassName)) {
+            if (!class_exists($revisionClassName)) {
                 eval(
                 "
                 namespace $revisionClassNameSpace;
@@ -465,7 +465,7 @@ class Plugin extends \Sloth\Core\Singleton
     public function is_rest()
     {
         $bIsRest = false;
-        if (function_exists('rest_url') && ! empty($_SERVER['REQUEST_URI'])) {
+        if (function_exists('rest_url') && !empty($_SERVER['REQUEST_URI'])) {
             $sRestUrlBase = get_rest_url(get_current_blog_id(), '/');
             $sRestPath = trim(parse_url($sRestUrlBase, PHP_URL_PATH), '/');
             $sRequestPath = trim($_SERVER['REQUEST_URI'], '/');
@@ -487,7 +487,7 @@ class Plugin extends \Sloth\Core\Singleton
 
             $controller = new $controller_name();
 
-            if (! is_subclass_of($controller, 'Sloth\Api\Controller')) {
+            if (!is_subclass_of($controller, 'Sloth\Api\Controller')) {
                 throw new \Exception('ApiController needs to extend Sloth\Api\Controller');
             }
 
@@ -496,7 +496,7 @@ class Plugin extends \Sloth\Core\Singleton
             $routes = [];
 
             foreach ($methods as $method) {
-                if (substr($method, 0, 1) === '_' || $method === 'single') {
+                if (str_starts_with($method, '_') || in_array($method, ['single', 'setRequest'])) {
                     continue;
                 }
                 $routes[$route_prefix . '/' . Utility::viewize($method) . '(?:/(?P<id>\w+))?'] = $method;
@@ -556,12 +556,12 @@ class Plugin extends \Sloth\Core\Singleton
 
         $dir_app_includes = (DIR_APP . DS . 'Includes' . DS);
 
-        if (! is_dir($dir_app_includes)) {
+        if (!is_dir($dir_app_includes)) {
             return false;
         }
 
         $files_include = glob($dir_app_includes . '*.php');
-        if (! count($files_include)) {
+        if (!count($files_include)) {
             return false;
         }
 
@@ -576,7 +576,7 @@ class Plugin extends \Sloth\Core\Singleton
             $model_name = $this->loadClassFromFile($file);
 
             $model = new $model_name();
-            if (! $model->register) {
+            if (!$model->register) {
                 continue;
             }
 
@@ -730,7 +730,7 @@ class Plugin extends \Sloth\Core\Singleton
     public function registerNavMenus()
     {
         if (Configure::read('theme.menus')) {
-            if (! is_array(Configure::read('theme.menus'))) {
+            if (!is_array(Configure::read('theme.menus'))) {
                 throw new \Exception('theme.menus must be an array!');
             }
             foreach (Configure::read('theme.menus') as $location => $name) {
@@ -753,7 +753,7 @@ class Plugin extends \Sloth\Core\Singleton
 
     public function trackDataChange()
     {
-        if (! $this->isDevEnv()) {
+        if (!$this->isDevEnv()) {
             return false;
         }
         file_put_contents(DIR_CACHE . DS . 'reload', time());
@@ -824,7 +824,7 @@ class Plugin extends \Sloth\Core\Singleton
         add_action(
             'pre_get_posts',
             function ($query) {
-                if (! defined('REST_REQUEST')) {
+                if (!defined('REST_REQUEST')) {
                     $query->set('posts_per_page', -1);
                 }
 
