@@ -36,10 +36,10 @@ class ConfigureServiceProvider extends ServiceProvider
             return;
         }
 
-
         foreach (glob($configDir . '/*.php') as $file) {
             $key = pathinfo($file, PATHINFO_FILENAME);
-            $this->mergeConfigFrom($file, $key);
+            $config = $this->app->make('config');
+            $config->set($key, array_merge($config->get($key, []), require $file));
         }
     }
 }
