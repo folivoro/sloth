@@ -70,6 +70,7 @@ class UrlServiceProvider extends ServiceProvider
                 'post_type_archive_link',
                 'get_comments_pagenum_link',
                 'sloth_get_permalink',
+                'get_permalink',
             ];
 
             foreach ($linkFilters as $filter) {
