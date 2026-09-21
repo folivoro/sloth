@@ -10,7 +10,6 @@ use Sloth\Model\Manifest\ModelManifestBuilder;
 use Sloth\Model\Manifest\TaxonomyManifestBuilder;
 use Sloth\Model\Registrar\ModelRegistrar;
 use Sloth\Model\Registrar\TaxonomyRegistrar;
-use Sloth\Model\Registrars\MenuRegistrar;
 
 /**
  * Service provider for model/post type registration and management.
@@ -37,7 +36,7 @@ use Sloth\Model\Registrars\MenuRegistrar;
  *
  * ## Hook execution order
  *
- * 1. `init` → MenuRegistrar, TaxonomyRegistrar (register + bindings),
+ * 1. `init` → TaxonomyRegistrar (register + bindings),
  *    ModelRegistrar (register + bindings)
  * 2. `add_meta_boxes` → TaxonomyRegistrar::addMetaBoxes()
  * 3. `registered_post_type` → Model::registerPostType()
@@ -55,7 +54,6 @@ use Sloth\Model\Registrars\MenuRegistrar;
  * @see ModelRegistrar          For post type registration
  * @see TaxonomyManifestBuilder For Taxonomy discovery
  * @see TaxonomyRegistrar       For taxonomy registration
- * @see MenuRegistrar         For menu registration
  */
 class ModelServiceProvider extends ServiceProvider
 {
@@ -71,7 +69,6 @@ class ModelServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
-        $this->app->singleton(MenuRegistrar::class, fn ($app): MenuRegistrar => new MenuRegistrar($app));
         $this->app->singleton(TaxonomyManifestBuilder::class, fn ($app): TaxonomyManifestBuilder => new TaxonomyManifestBuilder($app));
         $this->app->singleton(TaxonomyRegistrar::class, fn ($app): TaxonomyRegistrar => new TaxonomyRegistrar(app(TaxonomyManifestBuilder::class)));
         $this->app->singleton(ModelManifestBuilder::class, fn ($app): ModelManifestBuilder => new ModelManifestBuilder($app));
@@ -133,7 +130,7 @@ class ModelServiceProvider extends ServiceProvider
      * Register WordPress action hooks for model and taxonomy management.
      *
      * Returns an array of hook => callback mappings:
-     * - **init**: Menu registration, taxonomy + model discovery and registration.
+     * - **init**: Taxonomy + model discovery and registration.
      * - **add_meta_boxes**: Custom radio metaboxes for unique taxonomies.
      * - **registered_post_type**: Post type to model class resolution.
      *
@@ -146,7 +143,6 @@ class ModelServiceProvider extends ServiceProvider
     {
         return [
             'init' => [
-                fn () => app(MenuRegistrar::class)->init(),
                 $this->initTaxonomies(...),
                 $this->initModels(...),
             ],
