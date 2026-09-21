@@ -264,14 +264,14 @@ class WordPressEventBridgeTest extends TestCase
         // We test the callback behavior when bound('events') returns false
 
         // Create a bridge callback manually
-        $callback = (fn(string $hook, string $type): callable => $this->makeBridgeCallback($hook, $type))->call($testBridge, 'wp_loaded', 'action');
+        $callback = ($this->makeBridgeCallback(...))->call($testBridge, 'wp_loaded', 'action');
 
         // Should not throw, should return null for action
         $result = $callback();
         $this->assertNull($result);
 
         // Same for filter — should return original value
-        $filterCallback = (fn(string $hook, string $type): callable => $this->makeBridgeCallback($hook, $type))->call($testBridge, 'the_content', 'filter');
+        $filterCallback = ($this->makeBridgeCallback(...))->call($testBridge, 'the_content', 'filter');
 
         $result = $filterCallback('original');
         $this->assertSame('original', $result);

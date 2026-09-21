@@ -87,7 +87,7 @@ class SlothViewExtension extends AbstractViewExtension
             'asset' => fn (string $path): string => app('url')->asset($path),
 
             // Options
-            'options' => fn (?string $key = null, mixed $default = null): mixed => options($key, $default),
+            'options' => options(...),
 
             // Dynamic function call
             'function' => fn (string $functionName, mixed ...$args): mixed => call_user_func_array($functionName, $args),
