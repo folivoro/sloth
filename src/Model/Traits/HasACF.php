@@ -76,9 +76,7 @@ trait HasACF
 
         $key = $model->getAcfKey();
 
-        if (!isset(static::$acfFieldCache[$key])) {
-            static::$acfFieldCache[$key] = collect(get_fields($key) ?? []);
-        }
+        static::$acfFieldCache[$key] ??= collect(get_fields($key) ?? []);
 
         return static::$acfFieldCache[$key];
     }

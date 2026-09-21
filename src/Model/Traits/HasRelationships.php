@@ -66,9 +66,7 @@ trait HasRelationships
             $relation = $caller['function'];
         }
 
-        if (is_null($foreignKey)) {
-            $foreignKey = Str::snake($relation) . '_id';
-        }
+        $foreignKey ??= Str::snake($relation) . '_id';
 
         $instance = $this->setInstanceConnection(
             new $related(),
@@ -101,9 +99,7 @@ trait HasRelationships
         $relatedKey = null,
         $relation = null,
     ): BelongsToMany {
-        if (is_null($relation)) {
-            $relation = $this->guessBelongsToManyRelation();
-        }
+        $relation ??= $this->guessBelongsToManyRelation();
 
         $instance = $this->setInstanceConnection(
             $this->newRelatedInstance($related),
@@ -113,9 +109,7 @@ trait HasRelationships
 
         $relatedPivotKey = $relatedPivotKey ?: $instance->getForeignKey();
 
-        if (is_null($table)) {
-            $table = $this->joiningTable($related);
-        }
+        $table ??= $this->joiningTable($related);
 
         return new BelongsToMany(
             $instance->newQuery(),

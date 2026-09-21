@@ -248,9 +248,7 @@ class Customizer
      */
     public function removePostMetaBox(string $postType, string $box): static
     {
-        if (!isset(self::$removeMetaBoxes[$postType])) {
-            self::$removeMetaBoxes[$postType] = [];
-        }
+        self::$removeMetaBoxes[$postType] ??= [];
 
         self::$removeMetaBoxes[$postType] = self::joinArray(self::$removeMetaBoxes[$postType], $box);
 
