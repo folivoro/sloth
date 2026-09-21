@@ -84,7 +84,7 @@ class Menu
     public function all(): Collection
     {
         return collect($this->locations())
-            ->map(fn ($name, $location) => $this->location($location)->first())
+            ->map(fn ($name, string $location) => $this->location($location)->first())
             ->filter()
         ;
     }

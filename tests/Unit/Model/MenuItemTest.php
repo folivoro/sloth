@@ -51,12 +51,11 @@ describe('MenuItem', function (): void {
          * Build a MetaCollection of meta models for the given key/value pairs.
          *
          * @param  array<string, string>                   $pairs
-         * @return \Corcel\Model\Collection\MetaCollection
          */
         function metaCollection(array $pairs): \Corcel\Model\Collection\MetaCollection
         {
             $items = array_map(
-                fn ($value, $key) => new \Sloth\Model\Meta\PostMeta(['meta_key' => $key, 'meta_value' => $value]),
+                fn ($value, $key): \Sloth\Model\Meta\PostMeta => new \Sloth\Model\Meta\PostMeta(['meta_key' => $key, 'meta_value' => $value]),
                 $pairs,
                 array_keys($pairs),
             );
