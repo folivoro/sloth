@@ -23,8 +23,9 @@ class TestLocationMenu extends Menu
     /**
      * @var Builder|null Injected query builder returned by location()
      */
-    public static $mockQuery = null;
+    public static $mockQuery;
 
+    #[\Override]
     public static function location(string $location_name): self|Builder
     {
         return static::$mockQuery ?? parent::location($location_name);

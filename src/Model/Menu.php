@@ -72,7 +72,7 @@ class Menu extends Taxonomy
      *
      * @var string|null
      */
-    public static $location = null;
+    public static $location;
 
     /**
      * The human-readable display name for the menu location.
@@ -84,7 +84,7 @@ class Menu extends Taxonomy
      *
      * @var string|null
      */
-    public static $name = null;
+    public static $name;
 
     // -------------------------------------------------------------------------
     // Corcel-inherited properties
@@ -192,8 +192,6 @@ class Menu extends Taxonomy
      */
     public function getLocationAttribute(): false|string
     {
-        $location = array_search($this->term_taxonomy_id, get_nav_menu_locations(), true);
-
-        return $location === false ? false : $location;
+        return array_search($this->term_taxonomy_id, get_nav_menu_locations(), true);
     }
 }
