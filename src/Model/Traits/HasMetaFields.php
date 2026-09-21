@@ -3,13 +3,13 @@
 declare(strict_types=1);
 namespace Sloth\Model\Traits;
 
-use Corcel\Model\Meta\CommentMeta;
-use Corcel\Model\Meta\PostMeta;
-use Corcel\Model\Meta\TermMeta;
-use Corcel\Model\Meta\UserMeta;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use ReturnTypeWillChange;
+use Sloth\Model\Meta\CommentMeta;
+use Sloth\Model\Meta\PostMeta;
+use Sloth\Model\Meta\TermMeta;
+use Sloth\Model\Meta\UserMeta;
 use UnexpectedValueException;
 
 /**
@@ -79,10 +79,13 @@ trait HasMetaFields
      * ```
      */
     protected static array $metaClassMap = [
-        CommentMeta::class => CommentMeta::class,
-        PostMeta::class    => PostMeta::class,
-        TermMeta::class    => TermMeta::class,
-        UserMeta::class    => UserMeta::class,
+        \Corcel\Model\Comment::class => CommentMeta::class,
+        \Corcel\Model\Post::class    => PostMeta::class,
+        \Corcel\Model\Term::class    => TermMeta::class,
+        \Corcel\Model\User::class    => UserMeta::class,
+        \Sloth\Model\Model::class    => PostMeta::class,
+        \Sloth\Model\User::class     => UserMeta::class,
+        \Sloth\Model\Taxonomy::class => TermMeta::class,
     ];
 
     /**
@@ -155,7 +158,6 @@ trait HasMetaFields
             \Corcel\Model\Post::class    => PostMeta::class,
             \Corcel\Model\Term::class    => TermMeta::class,
             \Corcel\Model\User::class    => UserMeta::class,
-            // Sloth-specific mappings
             \Sloth\Model\Model::class    => PostMeta::class,
             \Sloth\Model\User::class     => UserMeta::class,
             \Sloth\Model\Taxonomy::class => TermMeta::class,
@@ -199,7 +201,6 @@ trait HasMetaFields
             \Corcel\Model\Post::class    => 'post_id',
             \Corcel\Model\Term::class    => 'term_id',
             \Corcel\Model\User::class    => 'user_id',
-            // Sloth-specific mappings
             \Sloth\Model\Model::class    => 'post_id',
             \Sloth\Model\User::class     => 'user_id',
             \Sloth\Model\Taxonomy::class => 'term_id',

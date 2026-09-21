@@ -5,9 +5,9 @@ namespace Sloth\Model\Traits;
 
 use function Sloth\Model\Concerns\get_option;
 use Carbon\Carbon;
-use Corcel\Model\Meta\PostMeta;
 use Illuminate\Database\Eloquent\Builder;
 use Sloth\Model\Builder\PostBuilder;
+use Sloth\Model\Meta\PostMeta;
 
 /**
  * Provides WordPress-specific query scopes for post models.

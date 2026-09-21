@@ -5,9 +5,9 @@ namespace Sloth\Model;
 
 use Corcel\Model as CorcelModel;
 use Corcel\Model\Comment;
-use Corcel\Model\Meta\UserMeta;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
+use Sloth\Model\Meta\UserMeta;
 use Sloth\Model\Traits\HasACF;
 use Sloth\Model\Traits\HasAliases;
 use Sloth\Model\Traits\HasMetaFields;
