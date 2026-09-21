@@ -10,15 +10,13 @@ use function get_post_type_archive_link;
 use function get_term_field;
 use function get_term_link;
 use function wp_setup_nav_menu_item;
-use Corcel\Model as CorcelModel;
 use Corcel\Model\CustomLink;
-use Corcel\Model\MenuItem as Corcel;
-use Corcel\Model\Meta\PostMeta;
 use Corcel\Model\Page;
-use Corcel\Model\Taxonomy;
+use Illuminate\Database\Eloquent\Model as Eloquent;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
 use Override;
-use ReflectionException;
+use Sloth\Model\Meta\PostMeta;
 use WP_Error;
 use WP_Post;
 
@@ -30,7 +28,7 @@ use WP_Post;
  *
  * @since 1.0.0
  *
- * @extends Model<\Corcel\Model\Post>
+ * @extends Model
  *
  * @property string $url The menu item URL
  * @property string $title The menu item title
@@ -42,25 +40,73 @@ use WP_Post;
  *
  * @example
  * ```php
- * // Get menu by location
- * $menu = Menu::location('primary');
- *
- * // Iterate through items
- * foreach ($menu->items as $item) {
+ * // Get menu items by location
+ * foreach (MainMenu::items() as $item) {
  *     echo $item->title;
  *     echo $item->url;
  *     echo $item->current ? 'active' : '';
  * }
  * ```
  */
-class MenuItem extends Corcel
+class MenuItem extends Post
 {
+    /**
+     * The WordPress post type for menu items.
+     *
+     * @since 1.0.0
+     */
+    public static $postType = 'nav_menu_item';
+
+    /**
+     * Whitelist of attributes serialized in array/JSON output.
+     *
+     * Keeps the API output lean by hiding raw post columns, the full meta
+     * relationship, and post-type accessors that are meaningless for
+     * menu items (content, excerpt, terms, keywords, ...).
+     *
+     * @var array<int, string>
+     */
+    protected $visible = [
+        'ID',
+        'title',
+        'url',
+        'target',
+        'menu_order',
+        'type',
+        'type_id',
+        'classes',
+        'current',
+        'current_item_parent',
+        'current_item_ancestor',
+        'in_current_path',
+        'children',
+    ];
+
+    /**
+     * Registry mapping menu item object types to model classes.
+     *
+     * Expanded at construction time with the models and taxonomies
+     * registered in the container (sloth.models, sloth.taxonomies).
+     *
+     * @since 1.0.0
+     *
+     * @var array<string, class-string>
+     */
+    protected array $instanceRelations = [
+        'post'     => Post::class,
+        'page'     => Page::class,
+        'custom'   => CustomLink::class,
+        'category' => Taxonomy::class,
+    ];
+
     /**
      * Creates a new MenuItem instance.
      *
-     * @param array<string, mixed> $attributes Initial attributes
+     * Merges the container's model and taxonomy registries into the
+     * instanceRelations map so item links resolve to the correct
+     * Sloth model or taxonomy class.
      *
-     * @throws ReflectionException If class reflection fails
+     * @param array<string, mixed> $attributes Initial attributes
      *
      * @since 1.0.0
      */
@@ -68,13 +114,13 @@ class MenuItem extends Corcel
     {
         parent::__construct($attributes);
 
+        $registry = fn (string $abstract): array => app()->bound($abstract) ? (array) app($abstract) : [];
         $this->instanceRelations = array_merge(
-            app('sloth.models') ?? [],
+            $registry('sloth.models'),
             $this->instanceRelations,
         );
-
         $this->instanceRelations = array_merge(
-            app('sloth.taxonomies') ?? [],
+            $registry('sloth.taxonomies'),
             $this->instanceRelations,
         );
     }
@@ -102,12 +148,12 @@ class MenuItem extends Corcel
     /**
      * Gets the parent menu item.
      *
-     * @return CorcelModel|CustomLink|Model|null The parent item or null
+     * @return CustomLink|Model|null The parent item or null
      *
      * @since 1.0.0
      */
     #[Override]
-    public function parent(): CustomLink|Model|CorcelModel|null
+    public function parent(): CustomLink|Model|null
     {
         $className = $this->getClassName();
 
@@ -123,12 +169,11 @@ class MenuItem extends Corcel
     /**
      * Gets the instance (actual post/page/term) this menu item links to.
      *
-     * @return CorcelModel|CustomLink|Model|null The instance or null
+     * @return Eloquent|null The instance or null
      *
      * @since 1.0.0
      */
-    #[Override]
-    public function instance(): CustomLink|Model|CorcelModel|null
+    public function instance(): ?Eloquent
     {
         $className = $this->getClassName();
 
@@ -148,7 +193,6 @@ class MenuItem extends Corcel
      *
      * @since 1.0.0
      */
-    #[Override]
     protected function getClassName(): ?string
     {
         return Arr::get($this->instanceRelations, $this->meta->_menu_item_object);
@@ -170,6 +214,42 @@ class MenuItem extends Corcel
             'post_type'         => get_permalink($this->instance()->ID ?? 0),
             default             => '',
         };
+    }
+
+    /**
+     * Gets the menu item type.
+     *
+     * @return string The menu item type (post_type, taxonomy, custom, ...)
+     *
+     * @since 1.0.0
+     */
+    public function getTypeAttribute(): string
+    {
+        return (string) $this->_menu_item_type;
+    }
+
+    /**
+     * Gets the ID of the object this menu item links to.
+     *
+     * @return int The object ID
+     *
+     * @since 1.0.0
+     */
+    public function getTypeIdAttribute(): int
+    {
+        return (int) $this->_menu_item_object_id;
+    }
+
+    /**
+     * Gets the link target.
+     *
+     * @return string The target attribute (_blank, ...)
+     *
+     * @since 1.0.0
+     */
+    public function getTargetAttribute(): string
+    {
+        return (string) $this->_menu_item_target;
     }
 
     /**
@@ -353,12 +433,12 @@ class MenuItem extends Corcel
     /**
      * Gets the child menu items.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany The children relationship
+     * @return HasManyThrough The children relationship
      *
      * @since 1.0.0
      */
     #[Override]
-    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function children(): HasManyThrough
     {
         return $this->hasManyThrough(
             self::class,
