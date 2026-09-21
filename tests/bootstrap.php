@@ -172,7 +172,17 @@ if (!function_exists('add_image_size')) {
 }
 
 if (!function_exists('register_nav_menu')) {
-    function register_nav_menu(string $location, string $description): void {}
+    function register_nav_menu(string $location, string $description): void
+    {
+        $GLOBALS['wp_nav_menu_calls'][] = ['location' => $location, 'name' => $description];
+    }
+}
+
+if (!function_exists('get_nav_menu_locations')) {
+    function get_nav_menu_locations(): array
+    {
+        return $GLOBALS['wp_nav_menu_locations'] ?? [];
+    }
 }
 
 if (!function_exists('is_blog_installed')) {

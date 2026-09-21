@@ -81,6 +81,7 @@ trait ApplicationProviderTrait
             // WordPress integration
             \Sloth\Database\DatabaseServiceProvider::class,
             \Sloth\Model\ModelServiceProvider::class,
+            \Sloth\Menu\MenuServiceProvider::class,
             \Sloth\Context\ContextServiceProvider::class,
             \Sloth\Template\TemplateServiceProvider::class,
             \Sloth\Routing\RoutingServiceProvider::class,

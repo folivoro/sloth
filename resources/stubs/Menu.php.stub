@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Sloth\Model\Menu;
+
+/**
+ * {{ class }} menu.
+ *
+ * Auto-discovers and registers the nav menu location on the `init` hook.
+ *
+ * @see https://folivoro.com/docs/menus
+ */
+class {{ class }} extends Menu
+{
+    public static $location = '{{ location }}';
+
+    public static $name = '{{ name }}';
+}
