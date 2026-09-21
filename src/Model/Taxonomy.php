@@ -3,28 +3,20 @@
 declare(strict_types=1);
 namespace Sloth\Model;
 
-use Illuminate\Database\Eloquent\Builder;
-use Sloth\Model\Traits\HasACF;
-use function admin_url;
-use function esc_attr;
-use function esc_attr__;
-use function esc_html__;
-use function esc_html_e;
 use function get_term;
 use function get_term_link;
-use function get_terms;
-use function wp_get_object_terms;
 use Corcel\Model as CorcelModel;
-use Corcel\Model\Meta\TermMeta;
 use Corcel\Model\Term;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 use ReflectionClass;
+use Sloth\Model\Meta\TermMeta;
+use Sloth\Model\Traits\HasACF;
 use Sloth\Model\Traits\HasAliases;
 use Sloth\Model\Traits\HasMetaFields;
-use Walker_Category_Checklist;
 use WP_Error;
 
 /**
@@ -390,14 +382,13 @@ class Taxonomy extends CorcelModel
      *
      * @since 1.0.0
      */
-    #[\Override]
+    #[Override]
     public function newQuery()
     {
         return isset($this->taxonomy) && $this->taxonomy ?
             parent::newQuery()->where('taxonomy', $this->taxonomy) :
             parent::newQuery();
     }
-
 
     /**
      * Get the ACF key for this taxonomy.

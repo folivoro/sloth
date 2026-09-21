@@ -26,7 +26,6 @@ trait ApplicationConvenienceTrait
     /**
      * Get the template context.
      *
-     *
      * @since 1.0.0
      */
     #[Deprecated(message: "use app('context')->getContext() instead")]

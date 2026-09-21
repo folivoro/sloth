@@ -6,12 +6,13 @@ namespace Sloth\Debug\Collectors;
 use DebugBar\DataCollector\Message\MessageInterface;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataFormatter\JsonDataFormatter;
+use Override;
 
 class SlothMessagesCollector extends MessagesCollector
 {
     protected ?JsonDataFormatter $jsonFormatter = null;
 
-    #[\Override]
+    #[Override]
     public function addMessage(mixed $message, string $label = 'info', array $context = []): void
     {
         if (is_string($message) && $context) {
@@ -39,9 +40,11 @@ class SlothMessagesCollector extends MessagesCollector
         }
 
         $contextJson = null;
+
         if ($context !== []) {
             foreach ($context as $key => $value) {
                 $formatted = $this->getDataFormatter()->formatVar($value);
+
                 if ($this->isJsonVarDumperUsed()) {
                     $contextJson[$key] = $formatted;
                     $context[$key] = null;
@@ -54,6 +57,7 @@ class SlothMessagesCollector extends MessagesCollector
         }
 
         $stackItem = [];
+
         if ($this->collectFile) {
             $stackItem = $this->getStackTraceItem(
                 array_slice(
@@ -64,15 +68,15 @@ class SlothMessagesCollector extends MessagesCollector
         }
 
         $this->messages[] = [
-            'message' => $messageText,
+            'message'      => $messageText,
             'message_html' => $messageHtml,
             'message_json' => $messageJson,
-            'is_string' => $isString,
-            'context' => $context,
+            'is_string'    => $isString,
+            'context'      => $context,
             'context_json' => $contextJson,
-            'label' => $label,
-            'time' => microtime(true),
-            'xdebug_link' => $stackItem !== [] ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
+            'label'        => $label,
+            'time'         => microtime(true),
+            'xdebug_link'  => $stackItem !== [] ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
         ];
 
         if ($this->hasTimeDataCollector()) {
@@ -82,9 +86,10 @@ class SlothMessagesCollector extends MessagesCollector
 
     protected function getJsonFormatter(): JsonDataFormatter
     {
-        if (!$this->jsonFormatter instanceof \DebugBar\DataFormatter\JsonDataFormatter) {
+        if (!$this->jsonFormatter instanceof JsonDataFormatter) {
             $this->jsonFormatter = new JsonDataFormatter();
         }
+
         return $this->jsonFormatter;
     }
 }

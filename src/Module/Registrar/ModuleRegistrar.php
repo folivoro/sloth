@@ -97,8 +97,8 @@ class ModuleRegistrar
                 'sloth/v1/module',
                 '/' . implode('/', $route),
                 [
-                    'methods'  => ['GET', 'POST'],
-                    'callback' => fn (WP_REST_Request $request) => $m->getJSON($request->get_params()),
+                    'methods'             => ['GET', 'POST'],
+                    'callback'            => fn (WP_REST_Request $request) => $m->getJSON($request->get_params()),
                     'permission_callback' => '__return_true',
                 ],
             );

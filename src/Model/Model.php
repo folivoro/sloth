@@ -6,20 +6,21 @@ namespace Sloth\Model;
 use function apply_filters;
 use function get_permalink;
 use Corcel\Model\Comment;
-use Corcel\Model\Meta\PostMeta;
-use Corcel\Model\Meta\ThumbnailMeta;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Override;
 use ReflectionClass;
 use Sloth\Field\Image;
 use Sloth\Http\RequestContext;
 use Sloth\Model\Builder\PostBuilder;
+use Sloth\Model\Meta\PostMeta;
+use Sloth\Model\Meta\ThumbnailMeta;
 use Sloth\Model\Traits\HasACF;
 use Sloth\Model\Traits\HasAliases;
 use Sloth\Model\Traits\HasCustomTimestamps;
@@ -640,9 +641,11 @@ class Model extends Eloquent
     /**
      * Get the parent post (for hierarchical post types).
      *
+     * @return BelongsTo|Eloquent|null
+     *
      * @since 1.0.0
      */
-    public function parent(): BelongsTo
+    public function parent(): BelongsTo|Eloquent|null
     {
         return $this->belongsTo(static::class, 'post_parent');
     }
@@ -650,9 +653,11 @@ class Model extends Eloquent
     /**
      * Get child posts (for hierarchical post types).
      *
+     * @return Relation
+     *
      * @since 1.0.0
      */
-    public function children(): HasMany
+    public function children(): Relation
     {
         return $this->hasMany(static::class, 'post_parent');
     }
@@ -1004,7 +1009,9 @@ class Model extends Eloquent
     {
         $array = parent::toArray();
 
-        foreach ($this->getMutatedAttributes() as $key) {
+        $mutated = $this->visible ?: $this->getMutatedAttributes();
+
+        foreach ($mutated as $key) {
             if (!array_key_exists($key, $array)) {
                 $array[$key] = $this->{$key};
             }

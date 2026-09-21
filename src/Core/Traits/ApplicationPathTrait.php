@@ -282,8 +282,8 @@ trait ApplicationPathTrait
      * Delegates to Illuminate's join_paths() helper. Accepts strings or
      * arrays — arrays are joined with '/' before being passed to join_paths().
      *
-     * @param  array|string|null $basePath base path
-     * @param  array|string      $path     optional sub-path to append
+     * @param array|string|null $basePath base path
+     * @param array|string      $path     optional sub-path to append
      *
      * @since 1.0.0
      */
@@ -453,5 +453,4 @@ trait ApplicationPathTrait
     {
         return join_paths($this->get('path.' . $prefix), $path);
     }
-
 }

@@ -6,9 +6,9 @@ namespace Sloth\Debug;
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
-use Sloth\Debug\Collectors\SlothMessagesCollector;
 use DebugBar\DebugBar;
 use Sloth\Core\Application;
+use Sloth\Debug\Collectors\SlothMessagesCollector;
 
 /**
  * Extended PHP DebugBar for the Sloth framework.

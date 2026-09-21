@@ -3,9 +3,7 @@
 declare(strict_types=1);
 namespace Sloth\Model\Registrar;
 
-use function add_meta_box;
 use function register_extended_taxonomy;
-use function remove_meta_box;
 use Sloth\Model\Manifest\TaxonomyManifestBuilder;
 
 /**
