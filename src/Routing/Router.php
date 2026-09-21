@@ -64,7 +64,6 @@ class Router
      * @since 1.0.0
      *
      * @param string $path
-     * @param mixed  $callback
      */
     public function post(string $path, mixed $callback): Route
     {
@@ -77,7 +76,6 @@ class Router
      * @since 1.0.0
      *
      * @param string $path
-     * @param mixed  $callback
      */
     public function put(string $path, mixed $callback): Route
     {
@@ -90,7 +88,6 @@ class Router
      * @since 1.0.0
      *
      * @param string $path
-     * @param mixed  $callback
      */
     public function delete(string $path, mixed $callback): Route
     {
@@ -184,7 +181,6 @@ class Router
      *
      * @param string $method
      * @param string $path
-     * @param mixed  $callback
      */
     private function add(string $method, string $path, mixed $callback): Route
     {

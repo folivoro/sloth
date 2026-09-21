@@ -239,8 +239,6 @@ class ViewServiceProvider extends ServiceProvider
      * Create and configure the View Factory.
      *
      * @since 1.0.0
-     *
-     * @param mixed $container
      */
     protected function createViewFactory(mixed $container): Factory
     {

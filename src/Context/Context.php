@@ -126,7 +126,6 @@ class Context implements ArrayAccess, IteratorAggregate
      * @since 1.0.0
      *
      * @param string $key
-     * @param mixed  $value
      */
     public function set(string $key, mixed $value): static
     {
@@ -214,11 +213,8 @@ class Context implements ArrayAccess, IteratorAggregate
     // -------------------------------------------------------------------------
     // ArrayAccess
     // -------------------------------------------------------------------------
-
     /**
      * @since 1.0.0
-     *
-     * @param mixed $offset
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -237,8 +233,6 @@ class Context implements ArrayAccess, IteratorAggregate
      * Resolves the provider for $offset on first access.
      *
      * @since 1.0.0
-     *
-     * @param mixed $offset
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -255,9 +249,6 @@ class Context implements ArrayAccess, IteratorAggregate
 
     /**
      * @since 1.0.0
-     *
-     * @param mixed $offset
-     * @param mixed $value
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -266,8 +257,6 @@ class Context implements ArrayAccess, IteratorAggregate
 
     /**
      * @since 1.0.0
-     *
-     * @param mixed $offset
      */
     public function offsetUnset(mixed $offset): void
     {

@@ -641,7 +641,6 @@ class Model extends Eloquent
     /**
      * Get the parent post (for hierarchical post types).
      *
-     * @return BelongsTo|Eloquent|null
      *
      * @since 1.0.0
      */
@@ -653,7 +652,6 @@ class Model extends Eloquent
     /**
      * Get child posts (for hierarchical post types).
      *
-     * @return Relation
      *
      * @since 1.0.0
      */

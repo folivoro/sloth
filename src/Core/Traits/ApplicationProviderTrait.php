@@ -189,9 +189,7 @@ trait ApplicationProviderTrait
      * - Array with callback key: `['callback' => fn() => ..., 'priority' => 20]`
      * - Array of either of the above
      *
-     * @param  mixed                                          $value
      * @return array<int, array{fn: callable, priority: int}>
-     *
      * @since 1.0.0
      */
     private function normalizeCallbacks(mixed $value): array

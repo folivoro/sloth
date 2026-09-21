@@ -45,7 +45,6 @@ abstract class Finder extends IlluminateFileViewFinder
      *
      * @param  int|string $key  The file URL if defined or numeric index
      * @param  string     $path The path to register
-     * @return $this
      *
      * @since 1.0.0
      */
@@ -66,7 +65,6 @@ abstract class Finder extends IlluminateFileViewFinder
      * Register multiple file paths.
      *
      * @param  array<int|string, string> $paths Array of paths to register
-     * @return $this
      *
      * @since 1.0.0
      */
