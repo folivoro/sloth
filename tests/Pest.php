@@ -23,9 +23,9 @@ function makeTestApp(): Application
 {
     $app = Application::configure();
     $app->instance('config', new \Illuminate\Config\Repository([
-        'admin' => require dirname(__DIR__) . '/src/Admin/config/admin.php',
-        'app'   => require dirname(__DIR__) . '/src/Core/config/app.php',
-        'theme' => require dirname(__DIR__) . '/src/Theme/config/theme.php',
+        'admin' => require __DIR__ . '/../src/Admin/config/admin.php',
+        'app'   => require __DIR__ . '/../src/Core/config/app.php',
+        'theme' => require __DIR__ . '/../src/Theme/config/theme.php',
     ]));
     $app->instance('files', new \Illuminate\Filesystem\Filesystem());
     $app->instance('events', new \Illuminate\Events\Dispatcher($app));
